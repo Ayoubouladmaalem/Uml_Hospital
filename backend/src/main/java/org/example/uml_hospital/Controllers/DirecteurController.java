@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/directeur")
+@CrossOrigin(origins = "http://localhost:3000")
 public class DirecteurController {
 
     private final MedecinService medecinService;
