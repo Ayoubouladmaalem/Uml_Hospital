@@ -46,7 +46,7 @@ function MedecinCRUD(){
     const handleAdd = async (e) =>{
         e.preventDefault(); // to perform asynchronous API calls without reloading the page
         try{
-            const res = await axios.post("http://localhost:8080/...", userData);
+            const res = await axios.post("http://localhost:8080/directeur/creer-medecin", userData);
             setUserData([...userData, res.data]); // Append new entry for userData to hold this entries ( The spread operator copies all existing elements of the userData array.)
             setCurrentUser(null);
             console.log("medecin added successfuly");
@@ -122,13 +122,10 @@ function MedecinCRUD(){
                                 <input type="text" className="form-control" id="telephone" value={currentUser?.telephone || ""} onChange={handleInputChange} placeholder="le numéro de téléphone" />
                             </div>
                             <div className="mb-3">
-                                <input type="text" className="form-control" id="Datedenaissance" value={currentUser?.Datedenaissance || ""} onChange={handleInputChange} placeholder="la date de naissance" />
+                                <input type="text" className="form-control" id="dateNaissance" value={currentUser?.dateNaissance || ""} onChange={handleInputChange} placeholder="la date de naissance" />
                             </div>
                             <div className="mb-3">
-                                <input type="text" className="form-control" id="Email" value={currentUser?.Email || ""} onChange={handleInputChange} placeholder="Email" />
-                            </div>
-                            <div className="mb-3">
-                                <input type="text" className="form-control" id="MotdePasse" value={currentUser?.MotdePasse || ""} onChange={handleInputChange} placeholder="Mot de Passe" />
+                                <input type="text" className="form-control" id="email" value={currentUser?.email || ""} onChange={handleInputChange} placeholder="Email" />
                             </div>
                             </form>
                         </div>
@@ -152,7 +149,6 @@ function MedecinCRUD(){
                             <th>Téléphone</th>
                             <th>Date de naissance</th>
                             <th>E-mail</th>
-                            <th>Mot de passe</th>
                             <th>Editer</th>
                             <th>Supprimer</th>
 
@@ -163,12 +159,11 @@ function MedecinCRUD(){
                             <tr key={index}>
                             <td>{user.nom}</td>
                             <td>{user.prenom}</td>
+                            <td>{user.specialite}</td>
                             <td>{user.sexe}</td>
                             <td>{user.telephone}</td>
                             <td>{user.dateNaissance}</td>
                             <td>{user.email}</td>
-                            <td>{user.motDePasse}</td>
-                            <td>{user.specialite}</td>
                             <td type="button" className="btn text-warning text-center" onClick={()=>handleEditClick(user)}><FontAwesomeIcon icon={faPencil} /></td>
                             <td className="btn text-danger text-center" onClick={()=>handleDelete(user.id)}><FontAwesomeIcon icon={faDeleteLeft} /></td>
                             </tr>

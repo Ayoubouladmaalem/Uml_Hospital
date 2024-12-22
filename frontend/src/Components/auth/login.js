@@ -6,14 +6,14 @@ import axios from "axios";
 
 function Login() {
     const [email,setEmail]= useState("");
-    const [password,setPassword] = useState("");
+    const [motDePasse,setMotDePasse] = useState("");
     const [errorMessage, setErrorMessage]= useState("");
     const navigate = useNavigate();
 
     const handleSubmit = async(e) =>{
         e.preventDefault();
         try{
-            const res = await axios.put("http://localhost:8080/api/auth", {email,password});
+            const res = await axios.post("http://localhost:8080/auth/login", {email,motDePasse});
             console.log(res.data);
             const { token, role } = res.data;
             //!!! Save token or user info to local storage
@@ -35,7 +35,7 @@ function Login() {
 
         }catch(error){
             console.error(error);
-            setErrorMessage("Invalid email or password");
+            setErrorMessage("Invalide email ou mot de passe");
         }
     }
 
@@ -53,7 +53,7 @@ function Login() {
                             <input type="email" className="form-control" id="email" aria-describedby="emailHelp" value={email} onChange={(e)=>setEmail(e.target.value)} placeholder="Enter email" />
                         </div>
                         <div className="form-group mb-3">
-                            <input type="password" className="form-control" id="password" value={password} onChange={(e)=>setPassword(e.target.value)} placeholder="Password"/>
+                            <input type="password" className="form-control" id="password" value={motDePasse} onChange={(e)=>setMotDePasse(e.target.value)} placeholder="Mot de passe"/>
                             {errorMessage && (<div className="text-danger">*
                                 {errorMessage}
                             </div>)}
@@ -67,7 +67,7 @@ function Login() {
                                     <Link to="/register">s'inscrire</Link>
                                 </h6>
                             </small>
-                        <button type="submit" className="btn btn-dark w-100" >
+                        <button type="submit" className="btn btn-dark w-100" to="" >
                             Connexion
                         </button>
                     </form>
