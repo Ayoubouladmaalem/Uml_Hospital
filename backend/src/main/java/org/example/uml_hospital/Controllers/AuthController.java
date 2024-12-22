@@ -14,6 +14,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/auth")
 @CrossOrigin(origins = "http://localhost:3000")
@@ -47,13 +49,17 @@ public class AuthController {
         try {
             User user = userService.authenticate(request);
             String jwt = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
-            return ResponseEntity.ok(jwt);
+            System.out.println("User role: " + user.getRole().name());
+
+            // Return the token in the response body
+            return ResponseEntity.ok().body(Map.of("token", jwt)); // Return token in a map
         } catch (RuntimeException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur interne : " + ex.getMessage());
         }
     }
+
 
 
     @GetMapping("/current-user")

@@ -9,10 +9,10 @@ public class RegisterRequest {
     private String nom;
     private String prenom;
     private String sexe;
-    private Date dateNaissance;
     private String telephone;
+    private Date dateNaissance;
+    private float poids;
     private String email;
     private String motDePasse;
-    private String ConfirmationMotDePasse;
-    private float poids;
+    private String confirmationMotDePasse;
 }

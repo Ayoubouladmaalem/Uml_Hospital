@@ -7,9 +7,9 @@ import java.util.Date;
 public class MedecinRequest {
     private String nom;
     private String prenom;
-    private String sexe;
-    private Date dateNaissance;
-    private String telephone;
-    private String email;
     private String specialite;
+    private String sexe;
+    private String telephone;
+    private Date dateNaissance;
+    private String email;
 }
