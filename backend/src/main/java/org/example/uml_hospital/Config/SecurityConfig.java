@@ -23,13 +23,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Désactiver CSRF pour les API REST
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/register", "/auth/login").permitAll()
                         .requestMatchers("/directeur/**").hasAuthority("directeur")
-                        .anyRequest().authenticated() // Protéger toutes les autres routes
+                        .requestMatchers("/medecin/**").hasAuthority("medecin")
+                        .requestMatchers("/pharmacien/**").hasAuthority("pharmacien")
+                        .requestMatchers("/secretaire/**").hasAuthority("secretaire")
+                        .anyRequest().authenticated()
                 )
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class); // Ajouter le filtre JWT
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

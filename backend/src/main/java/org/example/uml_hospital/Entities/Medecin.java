@@ -16,7 +16,7 @@ public class Medecin {
 
     private String specialite;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }
