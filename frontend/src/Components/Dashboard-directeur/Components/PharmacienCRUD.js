@@ -2,6 +2,7 @@ import React,{ useState, useEffect }  from 'react';
 import axios from 'axios';
 import { faPencil, faDeleteLeft} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import bootstrap from 'bootstrap/dist/js/bootstrap.bundle';
 
 
 function PharmacienCRUD(){
@@ -12,19 +13,26 @@ function PharmacienCRUD(){
     const [currentUser, setCurrentUser]= useState(null);
 
     const handleEditClick =(user)=>{
-        setisEditMode(true);
-        setCurrentUser(user);
-    }
+            setisEditMode(true);
+            setCurrentUser(user);
+            const modal = new bootstrap.Modal(document.getElementById("AddModal"));
+            modal.show();
+        }
     const handleAddClick = () => {
         setisEditMode(false);
-        setCurrentUser(null);
-    }
+        setCurrentUser({ nom: "",prenom: "", sexe: "",dateNaissance: "", telephone: "", email: ""});
+    };
     
+    
+    //API GET:
     //API GET:
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await axios.get("http://localhost:8080/api/medecins");
+                const token = localStorage.getItem("token");
+                const res = await axios.get("http://localhost:8080/directeur/pharmaciens", {headers: {
+                    Authorization: `Bearer ${token}`,
+                },});
                 setUserData(res.data);
             } catch (error) {
                 console.error("Erreur lors de la récupération des données:", error);
@@ -35,36 +43,56 @@ function PharmacienCRUD(){
 
     //API POST:
     //handle Input change
-    const handleInputChange =(e)=>{   //e (Event): Represents the event triggered by user interaction, typically when typing in an input field.
-        const {id, value} = e.target; //e.target: Refers to the input field that triggered the event.
-        setUserData((prevData) => ({ //update the userData State 
-            ...prevData, [id]:value //prevData represents the currentSatate
-        }));//Dynamically sets the value for the key specified by id in the userData object.
+    const handleInputChange = (e) => {
+        const { id, value } = e.target;
+        setCurrentUser((prevUser) => ({
+            ...prevUser,
+            [id]: value,
+        }));
     };
 
-
-    const handleAdd = async (e) =>{
-        e.preventDefault(); // to perform asynchronous API calls without reloading the page
-        try{
-            const res = await axios.post("http://localhost:8080/...", userData);
-            setUserData([...userData, res.data]); // Append new entry for userData to hold this entries ( The spread operator copies all existing elements of the userData array.)
-            setCurrentUser(null);
-            console.log("medecin added successfuly");
-        }catch(error){
-            console.log("Error a bro hh",error.response || error.message);
-        }
+    const handleDateChange = (e) =>{
+        setCurrentUser({ ...currentUser, dateNaissance: e.target.value });
     }
+
+    const handleAdd = async (e) => {
+        e.preventDefault();
+        
+        try {
+            const token = localStorage.getItem("token");
+            const config = {
+                headers: {
+                  Authorization: `Bearer ${token}`, 
+                },
+              };
+            console.log("Current User Data:", currentUser);
+            const res = await axios.post(
+                "http://localhost:8080/directeur/creer-pharmacien", currentUser, config
+            );
+            setUserData((prevData) => [...prevData, res.data]);
+            setCurrentUser(null);
+            console.log("Pharmacien ajouté avec succès");
+        } catch (error) {
+            console.error("Erreur lors de l'ajout d'un médecin:", error.response || error.message);
+        }
+    };
 
     //Api put:
 
     const handleUpdate = async (e) =>{
         e.preventDefault(); // to perform asynchronous API calls without reloading the page
         try{
-            const res = await axios.put(`http://localhost:8080/${currentUser.id}...`, currentUser);
+            const token = localStorage.getItem("token");
+            const config = {
+                headers: {
+                  Authorization: `Bearer ${token}`, 
+                },
+              };
+            const res = await axios.put(`http://localhost:8080/directeur/update-pharmacien/${currentUser.id}`, currentUser, config);
             setUserData((prevData) => prevData.map((user)=>
                 (user.id === currentUser.id ? res.data :user //Checks if the current user in the array matches the one being updated.
             ))) //If the user's id matches currentUser.id, replace the old user object with the updated res.data, Otherwise, keep the original user object unchanged.
-            console.log("medecin updated successfuly");
+            console.log("pharmacien updated successfuly");
             setCurrentUser(null);
         }catch(error){
             console.log("Error a bro hh",error.response || error.message);
@@ -78,14 +106,20 @@ function PharmacienCRUD(){
         if (isConfirmed) {
             try {
                 // Send a DELETE request to the API
-                await axios.delete(`http://localhost:8080/api/medecins/${userId}`);
+                const token = localStorage.getItem("token");
+                const config = {
+                    headers: {
+                    Authorization: `Bearer ${token}`, 
+                    },
+                };
+                await axios.delete(`http://localhost:8080/directeur/supprimer-pharmacien/${userId}`,config);
                 
-                // Update the state to remove the deleted medecin from the list
+                // Update the state to remove the deleted pharmacien from the list
                 setUserData((prevData) => prevData.filter((user) => user.id !== userId));
                 
-                console.log("Medecin deleted successfully");
+                console.log("pharmacien deleted successfully");
             } catch (error) {
-                console.error("Error deleting medecin:", error.response || error.message);
+                console.error("Error deleting pharmacien:", error.response || error.message);
             }
         }
     };
@@ -104,7 +138,7 @@ function PharmacienCRUD(){
                     <div className="modal-dialog">
                         <div className="modal-content">
                         <div className="modal-header">
-                            <h5 className="modal-title" id="exampleModalLabel"> {isEditMode? "Modifier un medecin": "Ajouter un Médecin"}</h5>
+                            <h5 className="modal-title" id="exampleModalLabel"> {isEditMode? "Modifier un Pharmacien": "Ajouter un Pharmacin"}</h5>
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div className="modal-body">
@@ -116,16 +150,22 @@ function PharmacienCRUD(){
                                 <input type="text" className="form-control" id="prenom" value={currentUser?.prenom || ""} onChange={handleInputChange} placeholder="le prénom" />
                             </div>
                             <div className="mb-3">
+                                <select className="form-select" id="sexe" value={currentUser?.sexe || ""} onChange={handleInputChange} aria-label="Default select example">
+                                    <option value="H">Homme</option>
+                                    <option value="F">Femme</option>
+                                </select>
+                            </div>
+                            <div className="mb-3">
                                 <input type="text" className="form-control" id="telephone" value={currentUser?.telephone || ""} onChange={handleInputChange} placeholder="le numéro de téléphone" />
                             </div>
-                            <div className="mb-3">
-                                <input type="text" className="form-control" id="Datedenaissance" value={currentUser?.Datedenaissance || ""} onChange={handleInputChange} placeholder="la date de naissance" />
+
+                            <div className='mb-3'>
+                                <input type="date" className="form-control me-2" id="dateNaissance" value={currentUser?.dateNaissance || ""}
+                                    onChange={handleDateChange} min="1940-01-01" max="2018-12-31" aria-label="Date de naissance"/>
                             </div>
+                            
                             <div className="mb-3">
-                                <input type="text" className="form-control" id="Email" value={currentUser?.Email || ""} onChange={handleInputChange} placeholder="Email" />
-                            </div>
-                            <div className="mb-3">
-                                <input type="text" className="form-control" id="MotdePasse" value={currentUser?.MotdePasse || ""} onChange={handleInputChange} placeholder="Mot de Passe" />
+                                <input type="text" className="form-control" id="email" value={currentUser?.email || ""} onChange={handleInputChange} placeholder="Email" />
                             </div>
                             </form>
                         </div>
@@ -145,11 +185,9 @@ function PharmacienCRUD(){
                             <th>Nom</th>
                             <th>Prénom</th>
                             <th>Sexe</th>
-                            <th>Téléphone</th>
                             <th>Date de naissance</th>
+                            <th>Téléphone</th>
                             <th>E-mail</th>
-                            <th>Mot de passe</th>
-                            <th>Spécialité</th>
                             <th>Editer</th>
                             <th>Supprimer</th>
 
@@ -161,11 +199,12 @@ function PharmacienCRUD(){
                             <td>{user.nom}</td>
                             <td>{user.prenom}</td>
                             <td>{user.sexe}</td>
-                            <td>{user.telephone}</td>
                             <td>{user.dateNaissance}</td>
+                            <td>{user.telephone}</td>
                             <td>{user.email}</td>
-                            <td>{user.motDePasse}</td>
-                            <td type="button" className="btn text-warning text-center" onClick={()=>handleEditClick(user)}><FontAwesomeIcon icon={faPencil} /></td>
+                            <td className="btn text-warning text-center"  onClick={() => handleEditClick(user)}>
+                                <FontAwesomeIcon icon={faPencil} />
+                            </td>                             
                             <td className="btn text-danger text-center" onClick={()=>handleDelete(user.id)}><FontAwesomeIcon icon={faDeleteLeft} /></td>
                             </tr>
                             

@@ -1,4 +1,4 @@
-package org.example.uml_hospital.Dtos;
+package org.example.uml_hospital.Dtos.Request;
 
 import lombok.Data;
 

@@ -3,30 +3,40 @@ import './login.css';
 import { Link, useNavigate } from "react-router-dom";
 import doctor from "../images/logo.png";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode"; //extract the role directly from the token.
 
 function Login() {
     const [email,setEmail]= useState("");
-    const [password,setPassword] = useState("");
+    const [motDePasse,setMotDePasse] = useState("");
     const [errorMessage, setErrorMessage]= useState("");
     const navigate = useNavigate();
 
     const handleSubmit = async(e) =>{
         e.preventDefault();
         try{
-            const res = await axios.put("http://localhost:8080/api/auth", {email,password});
+            const res = await axios.post("http://localhost:8080/auth/login", {email,motDePasse});
             console.log(res.data);
-            const { token, role } = res.data;
+            
+            const { token} = res.data;
+            if (typeof token !== 'string') {
+                throw new Error("Invalid token: must be a string");
+              }
+            // Decode the JWT token to get the role
+            const decodedToken = jwtDecode(token);
+            const role = decodedToken.role;
+
             //!!! Save token or user info to local storage
             localStorage.setItem("token", token);
             localStorage.setItem("role", role);
+            console.log("Role from backend: ", role);
             
-            if (role === "Directeur") {
+            if (role === "directeur") {
                 navigate("/dashboard-directeur");
-            } else if (role === "Medecin") {
+            } else if (role === "medecin") {
                 navigate("/dashboard-medecin");
-            } else if (role === "Secretaire") {
+            } else if (role === "secretaire") {
                 navigate("/dashboard-secretaire");
-            } else if (role === "Pharmacien") {
+            } else if (role === "pharmacien") {
                 navigate("/dashboard-pharmacien");
             }
              else {
@@ -35,7 +45,7 @@ function Login() {
 
         }catch(error){
             console.error(error);
-            setErrorMessage("Invalid email or password");
+            setErrorMessage("Invalide email ou mot de passe");
         }
     }
 
@@ -53,7 +63,7 @@ function Login() {
                             <input type="email" className="form-control" id="email" aria-describedby="emailHelp" value={email} onChange={(e)=>setEmail(e.target.value)} placeholder="Enter email" />
                         </div>
                         <div className="form-group mb-3">
-                            <input type="password" className="form-control" id="password" value={password} onChange={(e)=>setPassword(e.target.value)} placeholder="Password"/>
+                            <input type="password" className="form-control" id="password" value={motDePasse} onChange={(e)=>setMotDePasse(e.target.value)} placeholder="Mot de passe"/>
                             {errorMessage && (<div className="text-danger">*
                                 {errorMessage}
                             </div>)}
@@ -67,7 +77,7 @@ function Login() {
                                     <Link to="/register">s'inscrire</Link>
                                 </h6>
                             </small>
-                        <button type="submit" className="btn btn-dark w-100" >
+                        <button type="submit" className="btn btn-dark w-100" to="" >
                             Connexion
                         </button>
                     </form>

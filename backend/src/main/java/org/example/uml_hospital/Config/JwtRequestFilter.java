@@ -1,10 +1,8 @@
 package org.example.uml_hospital.Config;
 
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,7 +10,13 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
@@ -34,30 +38,29 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String email = null;
         String role = null;
 
-        // Vérifiez si l'en-tête Authorization contient un token valide
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            jwt = authorizationHeader.substring(7); // Supprimez "Bearer " pour obtenir le JWT
-            email = jwtUtil.extractEmail(jwt); // Extraire l'email depuis le JWT
-            role = jwtUtil.extractRole(jwt); // Extraire le rôle depuis le JWT
+            jwt = authorizationHeader.substring(7);
+            email = jwtUtil.extractEmail(jwt);
+            role = jwtUtil.extractRole(jwt);
         }
 
-        // Si un email est extrait et qu'aucune authentification n'est encore définie
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
-            // Validez le token JWT
             if (jwtUtil.validateToken(jwt, userDetails.getUsername())) {
+                // Create authorities based on role
+                List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(role));
+
+                // Set authentication with the authorities
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
+                        userDetails, null, authorities);
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                // Ajouter des logs ou traiter le rôle (optionnel)
-                System.out.println("Utilisateur authentifié : " + email + ", Rôle : " + role);
+                System.out.println("User authenticated: " + email + ", Role: " + role);
             }
         }
 
-        // Continuez la chaîne des filtres
         chain.doFilter(request, response);
     }
 }

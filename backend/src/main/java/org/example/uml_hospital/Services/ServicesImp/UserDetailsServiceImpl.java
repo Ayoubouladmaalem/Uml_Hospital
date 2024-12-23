@@ -24,11 +24,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé : " + email));
 
-        // Retourne un UserDetails avec les autorités (rôles)
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getMotDePasse(),
-                List.of(new SimpleGrantedAuthority(user.getRole().name())) // Ajout du rôle comme autorité
+                List.of(new SimpleGrantedAuthority(user.getRole().name()))
         );
     }
 }

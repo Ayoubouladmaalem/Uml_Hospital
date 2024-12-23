@@ -10,7 +10,7 @@ public class PasswordGenerator {
         SecureRandom random = new SecureRandom();
         StringBuilder password = new StringBuilder();
 
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < 3; i++) {
             int index = random.nextInt(CHARACTERS.length());
             password.append(CHARACTERS.charAt(index));
         }
