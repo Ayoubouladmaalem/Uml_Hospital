@@ -3,6 +3,7 @@ import './login.css';
 import { Link, useNavigate } from "react-router-dom";
 import doctor from "../images/logo.png";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode"; //extract the role directly from the token.
 
 function Login() {
     const [email,setEmail]= useState("");
@@ -15,18 +16,27 @@ function Login() {
         try{
             const res = await axios.post("http://localhost:8080/auth/login", {email,motDePasse});
             console.log(res.data);
-            const { token, role } = res.data;
+            
+            const { token} = res.data;
+            if (typeof token !== 'string') {
+                throw new Error("Invalid token: must be a string");
+              }
+            // Decode the JWT token to get the role
+            const decodedToken = jwtDecode(token);
+            const role = decodedToken.role;
+
             //!!! Save token or user info to local storage
             localStorage.setItem("token", token);
             localStorage.setItem("role", role);
+            console.log("Role from backend: ", role);
             
-            if (role === "Directeur") {
+            if (role === "directeur") {
                 navigate("/dashboard-directeur");
-            } else if (role === "Medecin") {
+            } else if (role === "medecin") {
                 navigate("/dashboard-medecin");
-            } else if (role === "Secretaire") {
+            } else if (role === "secretaire") {
                 navigate("/dashboard-secretaire");
-            } else if (role === "Pharmacien") {
+            } else if (role === "pharmacien") {
                 navigate("/dashboard-pharmacien");
             }
              else {

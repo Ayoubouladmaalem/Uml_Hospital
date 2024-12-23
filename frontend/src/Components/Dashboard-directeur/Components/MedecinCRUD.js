@@ -17,14 +17,17 @@ function MedecinCRUD(){
     }
     const handleAddClick = () => {
         setisEditMode(false);
-        setCurrentUser(null);
-    }
+        setCurrentUser({ nom: "",prenom: "", specialite: "", sexe: "", telephone: "", dateNaissance: "", email: ""});
+    };
     
     //API GET:
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await axios.get("http://localhost:8080/api/medecins");
+                const token = localStorage.getItem("token");
+                const res = await axios.get("http://localhost:8080/directeur/medecins", {headers: {
+                    Authorization: `Bearer ${token}`,
+                },});
                 setUserData(res.data);
             } catch (error) {
                 console.error("Erreur lors de la récupération des données:", error);
@@ -35,32 +38,46 @@ function MedecinCRUD(){
 
     //API POST:
     //handle Input change
-    const handleInputChange =(e)=>{   //e (Event): Represents the event triggered by user interaction, typically when typing in an input field.
-        const {id, value} = e.target; //e.target: Refers to the input field that triggered the event.
-        setUserData((prevData) => ({ //update the userData State 
-            ...prevData, [id]:value //prevData represents the currentSatate
-        }));//Dynamically sets the value for the key specified by id in the userData object.
+    const handleInputChange = (e) => {
+        const { id, value } = e.target;
+        setCurrentUser((prevUser) => ({
+            ...prevUser,
+            [id]: value,
+        }));
     };
 
 
-    const handleAdd = async (e) =>{
-        e.preventDefault(); // to perform asynchronous API calls without reloading the page
-        try{
-            const res = await axios.post("http://localhost:8080/directeur/creer-medecin", userData);
-            setUserData([...userData, res.data]); // Append new entry for userData to hold this entries ( The spread operator copies all existing elements of the userData array.)
+    const handleAdd = async (e) => {
+        e.preventDefault();
+        
+        try {
+            const token = localStorage.getItem("token");
+            console.log("token",token);
+            console.log("Current User Data:", currentUser);
+            const res = await axios.post(
+                "http://localhost:8080/directeur/creer-medecin",
+                currentUser,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            setUserData((prevData) => [...prevData, res.data]);
             setCurrentUser(null);
-            console.log("medecin added successfuly");
-        }catch(error){
-            console.log("Error a bro hh",error.response || error.message);
+            console.log("Médecin ajouté avec succès");
+        } catch (error) {
+            console.error("Erreur lors de l'ajout d'un médecin:", error.response || error.message);
         }
-    }
+    };
+    
 
     //Api put:
 
     const handleUpdate = async (e) =>{
         e.preventDefault(); // to perform asynchronous API calls without reloading the page
         try{
-            const res = await axios.put(`http://localhost:8080/${currentUser.id}`, currentUser);
+            const res = await axios.put(`http://localhost:8080/directeur/update-medecin/${currentUser.id}`, currentUser);
             setUserData((prevData) => prevData.map((user)=>
                 (user.id === currentUser.id ? res.data :user //Checks if the current user in the array matches the one being updated.
             ))) //If the user's id matches currentUser.id, replace the old user object with the updated res.data, Otherwise, keep the original user object unchanged.
@@ -78,7 +95,7 @@ function MedecinCRUD(){
         if (isConfirmed) {
             try {
                 // Send a DELETE request to the API
-                await axios.delete(`http://localhost:8080/api/medecins/${userId}`);
+                await axios.delete(`http://localhost:8080/directeur/supprimer-medecin/${userId}`);
                 
                 // Update the state to remove the deleted medecin from the list
                 setUserData((prevData) => prevData.filter((user) => user.id !== userId));
@@ -117,6 +134,9 @@ function MedecinCRUD(){
                             </div>
                             <div className="mb-3">
                                 <input type="text" className="form-control" id="specialite" value={currentUser?.specialite || ""} onChange={handleInputChange} placeholder="la spécialité" />
+                            </div>
+                            <div className="mb-3">
+                                <input type="text" className="form-control" id="sexe" value={currentUser?.sexe || ""} onChange={handleInputChange} placeholder="le sexe" />
                             </div>
                             <div className="mb-3">
                                 <input type="text" className="form-control" id="telephone" value={currentUser?.telephone || ""} onChange={handleInputChange} placeholder="le numéro de téléphone" />
