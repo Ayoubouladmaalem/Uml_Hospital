@@ -1,5 +1,6 @@
 package org.example.uml_hospital.Controllers;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.example.uml_hospital.Dtos.Request.MedecinRequest;
 import org.example.uml_hospital.Dtos.Response.MedecinResponse;
 import org.example.uml_hospital.Entities.Medecin;
@@ -8,11 +9,13 @@ import org.example.uml_hospital.Services.ServicesInterfaces.MedecinService;
 import org.example.uml_hospital.Utils.CurrentUserUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("/directeur")
 @CrossOrigin(origins = "http://localhost:3000")
 public class MedecinController {
 
@@ -23,10 +26,16 @@ public class MedecinController {
         this.medecinService = medecinService;
         this.currentUserUtil = currentUserUtil;
     }
-
+    @PreAuthorize("hasRole('ROLE_DIRECTEUR')")
     @PostMapping("/directeur/creer-medecin")
-    public ResponseEntity<String> creerMedecin(@RequestBody MedecinRequest request) {
-        medecinService.creerMedecin(request);
+//    public ResponseEntity<String> creerMedecin(@RequestBody MedecinRequest request) {
+//        medecinService.creerMedecin(request);
+//        return ResponseEntity.status(HttpStatus.CREATED).body("Médecin créé avec succès !");
+//    }
+    public ResponseEntity<String> creerMedecin(HttpServletRequest request, @RequestBody MedecinRequest medecinRequest) {
+        String token = request.getHeader("Authorization");
+        System.out.println("Token received: " + token); // Log token
+        medecinService.creerMedecin(medecinRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body("Médecin créé avec succès !");
     }
 
@@ -43,7 +52,7 @@ public class MedecinController {
     }
 
 
-    @GetMapping("/directeur/medecins")
+    @GetMapping("/medecins")
     public ResponseEntity<List<MedecinResponse>> getMedecins() {
         List<MedecinResponse> medecins = medecinService.getAllMedecins();
         return ResponseEntity.ok(medecins);
