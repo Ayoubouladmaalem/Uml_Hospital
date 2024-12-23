@@ -9,7 +9,10 @@ function PatientConsulting(){
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await axios.get("http://localhost:8080/api/medecins");
+                const token = localStorage.getItem("token");
+                const res = await axios.get("http://localhost:8080/directeur/patients", {headers: {
+                    Authorization: `Bearer ${token}`,
+                },});
                 setUserData(res.data);
             } catch (error) {
                 console.error("Erreur lors de la récupération des données:", error);
@@ -37,7 +40,6 @@ function PatientConsulting(){
                             <th>Téléphone</th>
                             <th>Date de naissance</th>
                             <th>E-mail</th>
-                            <th>Mot de passe</th>
 
                         </tr>
                     </thead>
@@ -51,7 +53,6 @@ function PatientConsulting(){
                             <td>{user.telephone}</td>
                             <td>{user.dateNaissance}</td>
                             <td>{user.email}</td>
-                            <td>{user.motDePasse}</td>
                             </tr>
                             
                         ))}
