@@ -14,8 +14,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.example.uml_hospital.Entities.Role.medecin;
+
 @RestController
-@RequestMapping("/directeur")
 @CrossOrigin(origins = "http://localhost:3000")
 public class MedecinController {
 
@@ -26,16 +27,12 @@ public class MedecinController {
         this.medecinService = medecinService;
         this.currentUserUtil = currentUserUtil;
     }
-    @PreAuthorize("hasRole('ROLE_DIRECTEUR')")
+
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/directeur/creer-medecin")
-//    public ResponseEntity<String> creerMedecin(@RequestBody MedecinRequest request) {
-//        medecinService.creerMedecin(request);
-//        return ResponseEntity.status(HttpStatus.CREATED).body("Médecin créé avec succès !");
-//    }
-    public ResponseEntity<String> creerMedecin(HttpServletRequest request, @RequestBody MedecinRequest medecinRequest) {
-        String token = request.getHeader("Authorization");
-        System.out.println("Token received: " + token); // Log token
-        medecinService.creerMedecin(medecinRequest);
+    public ResponseEntity<String> creerMedecin(@RequestBody MedecinRequest request) {
+        System.out.println("Received POST request for /creer-medecin with data: " + medecin);
+        medecinService.creerMedecin(request);
         return ResponseEntity.status(HttpStatus.CREATED).body("Médecin créé avec succès !");
     }
 
@@ -52,7 +49,7 @@ public class MedecinController {
     }
 
 
-    @GetMapping("/medecins")
+    @GetMapping("/directeur/medecins")
     public ResponseEntity<List<MedecinResponse>> getMedecins() {
         List<MedecinResponse> medecins = medecinService.getAllMedecins();
         return ResponseEntity.ok(medecins);
