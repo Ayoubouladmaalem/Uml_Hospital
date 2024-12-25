@@ -1,6 +1,6 @@
 import React,{ useState, useEffect }  from 'react';
 import axios from 'axios';
-import { faPencil, faDeleteLeft} from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faPen} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import bootstrap from 'bootstrap/dist/js/bootstrap.bundle';
 
@@ -202,10 +202,24 @@ function PharmacienCRUD(){
                             <td>{user.dateNaissance}</td>
                             <td>{user.telephone}</td>
                             <td>{user.email}</td>
-                            <td className="btn text-warning text-center"  onClick={() => handleEditClick(user)}>
-                                <FontAwesomeIcon icon={faPencil} />
-                            </td>                             
-                            <td className="btn text-danger text-center" onClick={()=>handleDelete(user.id)}><FontAwesomeIcon icon={faDeleteLeft} /></td>
+                            <td>
+                                <button
+                                className="btn text-warning"
+                                aria-label={`Edit ${user.nom}`}
+                                onClick={() => handleEditClick(user)}
+                                >
+                                <FontAwesomeIcon icon={faPen} />
+                                </button>
+                            </td>                           
+                            <td>
+                                <button
+                                className="btn text-danger"
+                                aria-label={`Delete ${user.nom}`}
+                                onClick={() => handleDelete(user.id)}
+                                >
+                                <FontAwesomeIcon icon={faTrash} />
+                                </button>
+                            </td>
                             </tr>
                             
                         ))}

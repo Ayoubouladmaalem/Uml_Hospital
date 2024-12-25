@@ -4,7 +4,7 @@ nav1 {
     color: white;
     width: 60%;
     height: 100vh;
-    max-width: 200px;
+    max-width: 220px;
     font-size: 20px;
     }
     
@@ -29,3 +29,16 @@ nav1 {
     color: white;
     }
     
+    .navbar-nav .logo{
+        position: absolute;
+        top: 60px;
+        max-width: 220px;
+    }
+
+    .underline{
+        position: absolute;
+        max-width: 220px;
+        height: 2px;
+        background-color: white;
+        bottom: 60px;
+    }
