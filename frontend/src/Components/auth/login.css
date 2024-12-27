@@ -1,0 +1,64 @@
+/* Container holding the image and the text */
+.container1 {
+    text-align: center;
+/* background-image: url("../images/hopital2.jpg"); */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100vh; /* Full viewport height */
+    width: 100vw; /* Full viewport width */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-blend-mode: hard-light;
+}
+
+.login-container {
+    height: 100vh;
+    background-color: #f8f9fa;
+}
+
+.login-card {
+    display: flex;
+    flex-direction: row;
+    width: 800px;
+    background: #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.login-image-section {
+    flex: 1;
+}
+
+.login-image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-right: 1px solid #dee2e6;
+}
+
+/* Form Section */
+.login-form-section {
+    flex: 1;
+    padding: 30px;
+}
+
+.login-form h3 {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.login-form .form-group input {
+    height: 45px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+}
+
+.login-form button {
+    height: 45px;
+    font-size: 16px;
+    font-weight: bold;
+}
+

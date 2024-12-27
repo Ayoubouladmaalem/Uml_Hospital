@@ -1,7 +1,5 @@
 package org.example.uml_hospital.Controllers;
 
-
-
 import org.example.uml_hospital.Dtos.Request.PatientRequest;
 import org.example.uml_hospital.Dtos.Response.PatientResponse;
 import org.example.uml_hospital.Entities.Patient;

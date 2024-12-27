@@ -1,13 +1,7 @@
 package org.example.uml_hospital.Dtos;
 
-import org.example.uml_hospital.Dtos.Response.MedecinResponse;
-import org.example.uml_hospital.Dtos.Response.PatientResponse;
-import org.example.uml_hospital.Dtos.Response.PharmacienResponse;
-import org.example.uml_hospital.Dtos.Response.SecretaireResponse;
-import org.example.uml_hospital.Entities.Medecin;
-import org.example.uml_hospital.Entities.Patient;
-import org.example.uml_hospital.Entities.Pharmacien;
-import org.example.uml_hospital.Entities.Secretaire;
+import org.example.uml_hospital.Dtos.Response.*;
+import org.example.uml_hospital.Entities.*;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -64,4 +58,24 @@ public class Mapper {
 
         return response;
     }
+
+    public ConsultationResponse convertToConsultationResponse(Consultation consultation) {
+        ConsultationResponse response = new ConsultationResponse();
+        response.setId(consultation.getId());
+        response.setMotif(consultation.getMotif());
+        response.setTypeConsultation(consultation.getTypeConsultation());
+        response.setDateConsultation(consultation.getDateConsultation());
+
+        if (consultation.getMedecin() != null) {
+            response.setMedecinName(consultation.getMedecin().getUser().getNom() + " " +
+                    consultation.getMedecin().getUser().getPrenom());
+        }
+        if (consultation.getPatient() != null) {
+            response.setPatientName(consultation.getPatient().getUser().getNom() + " " +
+                    consultation.getPatient().getUser().getPrenom());
+        }
+
+        return response;
+    }
+
 }
