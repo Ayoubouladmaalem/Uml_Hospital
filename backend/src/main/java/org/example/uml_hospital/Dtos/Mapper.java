@@ -1,9 +1,11 @@
 package org.example.uml_hospital.Dtos;
 
 import org.example.uml_hospital.Dtos.Response.MedecinResponse;
+import org.example.uml_hospital.Dtos.Response.PatientResponse;
 import org.example.uml_hospital.Dtos.Response.PharmacienResponse;
 import org.example.uml_hospital.Dtos.Response.SecretaireResponse;
 import org.example.uml_hospital.Entities.Medecin;
+import org.example.uml_hospital.Entities.Patient;
 import org.example.uml_hospital.Entities.Pharmacien;
 import org.example.uml_hospital.Entities.Secretaire;
 import org.springframework.stereotype.Component;
@@ -46,6 +48,20 @@ public class Mapper {
         response.setDateNaissance(secretaire.getUser().getDateNaissance());
         response.setTelephone(secretaire.getUser().getTelephone());
         response.setEmail(secretaire.getUser().getEmail());
+        return response;
+    }
+
+    public PatientResponse convertToPatientResponse(Patient patient) {
+        PatientResponse response = new PatientResponse();
+        response.setId(String.valueOf(patient.getId()));
+        response.setNom(patient.getUser().getNom());
+        response.setPrenom(patient.getUser().getPrenom());
+        response.setSexe(patient.getUser().getSexe());
+        response.setDateNaissance(patient.getUser().getDateNaissance());
+        response.setTelephone(patient.getUser().getTelephone());
+        response.setEmail(patient.getUser().getEmail());
+        response.setPoids(patient.getPoids());
+
         return response;
     }
 }

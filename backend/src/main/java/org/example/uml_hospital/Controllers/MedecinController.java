@@ -1,6 +1,5 @@
 package org.example.uml_hospital.Controllers;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.example.uml_hospital.Dtos.Request.MedecinRequest;
 import org.example.uml_hospital.Dtos.Response.MedecinResponse;
 import org.example.uml_hospital.Entities.Medecin;
@@ -9,7 +8,6 @@ import org.example.uml_hospital.Services.ServicesInterfaces.MedecinService;
 import org.example.uml_hospital.Utils.CurrentUserUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
