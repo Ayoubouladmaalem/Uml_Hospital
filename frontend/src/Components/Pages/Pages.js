@@ -14,6 +14,8 @@ import Patient from "../Dashboard-directeur/Nav-Items/Patient";
 import Pharmacien from "../Dashboard-directeur/Nav-Items/Pharmacien";
 import Secretaire from "../Dashboard-directeur/Nav-Items/Secretaire";
 import ProfileDirecteur from "../Dashboard-directeur/Components/Profile";
+import DashboardP from "../Dashboard-patient/DashboardP";
+import RDV from "../Dashboard-patient/Nav-Items/RDV";
 
 function Pages(){
     return(
@@ -32,6 +34,9 @@ function Pages(){
                 <Route path='/dashboard-directeur/Pharmacien' element={<Pharmacien/>}/>
                 <Route path='/dashboard-directeur/Secretaire' element={<Secretaire/>}/>
                 <Route path='/dashboard-directeur/Profile' element={<ProfileDirecteur/>}/>
+                <Route path='/dashboard-patient' element={<DashboardP/>}/>
+                <Route path='/dashboard-patient/RDV' element={<RDV/>}/>
+
             </Routes>
         </div>
     )

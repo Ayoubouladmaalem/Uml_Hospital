@@ -151,6 +151,7 @@ function PharmacienCRUD(){
                             </div>
                             <div className="mb-3">
                                 <select className="form-select" id="sexe" value={currentUser?.sexe || ""} onChange={handleInputChange} aria-label="Default select example">
+                                <option value="">-- Sélectionnez --</option>
                                     <option value="H">Homme</option>
                                     <option value="F">Femme</option>
                                 </select>
