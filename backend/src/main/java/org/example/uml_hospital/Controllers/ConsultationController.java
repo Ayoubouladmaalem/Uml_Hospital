@@ -65,12 +65,28 @@ public class ConsultationController {
     @PostMapping("/patient/creer-consultation")
     public ResponseEntity<ConsultationResponse> createConsultation(@RequestBody ConsultationRequest request) {
         try {
+            // Vérification des paramètres d'entrée
+            if (request.getMotif() == null || request.getMotif().isEmpty()) {
+                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            }
+            if (request.getTypeConsultation() == null || request.getTypeConsultation().isEmpty()) {
+                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            }
+            if (request.getDateConsultation() == null) {
+                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            }
+
+            // Appel du service pour créer la consultation
             ConsultationResponse response = consultationService.createConsultation(request);
             return new ResponseEntity<>(response, HttpStatus.CREATED);
+
         } catch (Exception e) {
+            // Log l'erreur pour des diagnostics plus détaillés
+            e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
+
 
     @DeleteMapping("/medecin/supprimer-consultation/{id}")
     public ResponseEntity<?> supprimerConsulation(@PathVariable Long id) {
